@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SatyaCHECK — AI Fact Checker</title>
+  <meta name="description" content="SatyaCHECK is an AI fact-checker powered by Groq. Paste any claim or WhatsApp forward and get an instant verdict with sources — in English, Hindi, Odia, or Bengali." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <a class="nav-logo" href="#">Satya<span>CHECK</span></a>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">How it Works</a></li>
+      <li><a href="#">Languages</a></li>
+    </ul>
+    </nav>
+
+  <div class="page-wrapper">
+    <main class="main-content">
+
+      <div class="fade-up-1" style="text-align:center; max-width:680px;">
+        <div class="hero-eyebrow">⚖️ &nbsp;AI-Powered Truth Engine</div>
+        <h1 class="hero-title">Satya<span>CHECK</span></h1>
+        <p class="hero-script">सत्यम् एव जयते — Truth Alone Triumphs</p>
+        <p class="hero-tagline">
+          Paste any claim, news headline, or WhatsApp forward.<br/>
+          Groq's LLM analyses it and returns an instant, sourced verdict.
+        </p>
+        <div class="lang-pills">
+          <span class="lang-pill"><span class="dot"></span>English</span>
+          <span class="lang-pill"><span class="dot"></span>हिंदी</span>
+          <span class="lang-pill"><span class="dot"></span>ଓଡ଼ିଆ</span>
+          <span class="lang-pill"><span class="dot"></span>বাংলা</span>
+        </div>
+      </div>
+
+      <div class="glass-card checker-panel fade-up-2 glow-on-load" style="width:100%;">
+        <div class="checker-header">
+          <span class="checker-title">Enter Claim</span>
+          <div class="lang-selector" id="langSelector">
+            <button class="lang-btn active" onclick="setLang('English', this)" id="lang-English">EN</button>
+            <button class="lang-btn" onclick="setLang('Hindi', this)"   id="lang-Hindi">HI</button>
+            <button class="lang-btn" onclick="setLang('Odia', this)"    id="lang-Odia">OD</button>
+            <button class="lang-btn" onclick="setLang('Bengali', this)" id="lang-Bengali">BN</button>
+          </div>
+        </div>
+
+        <textarea
+          id="claimInput"
+          class="checker-textarea"
+          placeholder="Paste any claim, forward, or headline here… (Ctrl+Enter to check)"
+        ></textarea>
+
+        <div class="checker-footer">
+          <div class="checker-meta">
+            <span class="meta-item">Groq Llama-3.3</span>
+            <span class="meta-item">Live Analysis</span>
+            <span class="meta-item">Multilingual</span>
+          </div>
+          <button id="checkBtn" class="btn-primary" onclick="checkFact()">
+            <span id="btnText">🔍 Verify Claim</span>
+            <span id="btnLoader" class="btn-loader hidden"></span>
+          </button>
+        </div>
+      </div>
+
+      <div id="resultCard" class="verdict-card fade-up hidden" style="width:100%;">
+        <div class="verdict-header">
+          <div class="verdict-dots">
+            <div class="verdict-dot red"></div>
+            <div class="verdict-dot amber"></div>
+            <div class="verdict-dot green"></div>
+          </div>
+          <span class="verdict-header-title" id="resultTimestamp">satyacheck — analysis</span>
+          <span></span>
+        </div>
+
+        <div class="verdict-body">
+          <div id="verdictBadge" class="verdict-badge"></div>
+
+          <div class="score-row">
+            <div>
+              <div class="score-label">Credibility Score</div>
+              <div>
+                <span id="scoreNumber" class="score-number">—</span>
+                <span class="score-out-of">/ 100</span>
+              </div>
+              <div class="score-bar-track">
+                <div id="scoreBar" class="score-bar-fill"></div>
+              </div>
+            </div>
+            <div style="flex:1; min-width:180px;">
+              <div class="score-label">Verdict</div>
+              <div id="verdictTitle" style="font-size:1.05rem; font-weight:500; color:var(--text-primary); line-height:1.4; margin-top:4px;"></div>
+            </div>
+          </div>
+
+          <div class="claims-section">
+            <div class="claims-label">Analysis</div>
+            <div id="explanationBlock" class="claim-block info"></div>
+          </div>
+
+          <div class="claims-section" id="keyPointsSection">
+            <div class="claims-label">Key Points</div>
+            <div id="keyPointsList"></div>
+          </div>
+
+          <div class="sources-section" id="sourcesSection">
+            <div class="sources-label">Reference Sources</div>
+            <div class="sources-grid" id="sourcesGrid"></div>
+          </div>
+
+          <div class="translation-section" id="translationSection">
+            <div class="translation-header">
+              <span class="translation-label">🌐 Translate Output</span>
+              <div class="trans-lang-btns">
+                <button class="trans-btn" onclick="translateOutput('English')"  id="trans-English" >English</button>
+                <button class="trans-btn" onclick="translateOutput('Hindi')"    id="trans-Hindi"   >हिंदी</button>
+                <button class="trans-btn" onclick="translateOutput('Odia')"     id="trans-Odia"    >ଓଡ଼ିଆ</button>
+                <button class="trans-btn" onclick="translateOutput('Bengali')"  id="trans-Bengali" >বাংলা</button>
+              </div>
+            </div>
+            <div class="trans-output" id="transOutput">
+              <span style="color:var(--text-muted); font-style:italic; font-size:13px;">
+                Select a language above to translate this result.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="verdict-footer">
+          <span class="powered-by">⚡ Powered by Groq + Llama-3.3-70B</span>
+          <button class="btn-ghost" onclick="resetCheck()">↩ Check Another</button>
+        </div>
+      </div>
+
+      <div id="errorCard" class="error-card hidden" style="width:100%;">
+        <span class="error-icon">⚠️</span>
+        <p id="errorMsg" class="error-msg"></p>
+        <button class="btn-ghost" onclick="resetCheck()">Try Again</button>
+      </div>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-logo">Satya<span>CHECK</span></div>
+    <div class="footer-copy">Built for truth · 2026 · Powered by Groq AI</div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
